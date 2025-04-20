@@ -22,11 +22,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -256,5 +258,17 @@ public class SessaoVotacaoService {
         }
         
         return resultadoMapper.toDto(resultado);
+    }
+    
+    /**
+     * List all voting sessions with pagination
+     * 
+     * @param pageable Pagination information
+     * @return List of session DTOs
+     */
+    @Transactional(readOnly = true)
+    public List<SessaoVotacaoDTO> listarSessoes(Pageable pageable) {
+        log.info("Listando sessões de votação");
+        return mapper.toDtoList(sessaoRepository.findAll(pageable).getContent());
     }
 }

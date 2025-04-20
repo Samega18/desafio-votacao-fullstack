@@ -48,13 +48,13 @@ public class CPFValidator {
         // Simulate a fake CPF validation service
         try {
             // 20% chance of the CPF being invalid
-            if (random.nextInt(5) == 0) {
-                log.info("CPF inválido: {}", cpf);
-                throw new CPFInvalidoException("CPF inválido");
-            }
+//            if (random.nextInt(5) == 0) {
+//                log.info("CPF inválido: {}", cpf);
+//                throw new CPFInvalidoException("CPF inválido");
+//            }
             
-            // 10% chance of the associate not being able to vote
-            if (random.nextInt(10) == 0) {
+            // 20% chance of the associate not being able to vote
+            if (random.nextInt(5) == 0) {
                 log.info("Associado não pode votar: {}", cpf);
                 throw new AssociadoNaoPodeVotarException("Associado não pode votar");
             }

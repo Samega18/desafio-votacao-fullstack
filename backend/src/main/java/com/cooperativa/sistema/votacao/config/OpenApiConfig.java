@@ -1,11 +1,11 @@
 package com.cooperativa.sistema.votacao.config;
 
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.License;
-import io.swagger.v3.oas.models.security.SecurityScheme;
 import io.swagger.v3.oas.models.servers.Server;
 import io.swagger.v3.oas.models.tags.Tag;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,6 +19,7 @@ import java.util.List;
  * Configuration for OpenAPI documentation
  */
 @Configuration
+@OpenAPIDefinition
 public class OpenApiConfig {
 
     @Value("${api.version}")
@@ -42,15 +43,12 @@ public class OpenApiConfig {
                 .servers(List.of(
                         new Server()
                                 .url("http://localhost:8080")
-                                .description("Servidor de desenvolvimento"),
-                        new Server()
-                                .url("https://api.cooperativa.com")
-                                .description("Servidor de produção")))
-                .tags(Arrays.asList(
-                        createTag("pautas", "Gerenciamento de pautas para votação"),
-                        createTag("sessoes", "Gerenciamento de sessões de votação"),
-                        createTag("votos", "Registro e contabilização de votos"),
-                        createTag("associados", "Gerenciamento de associados")));
+                                .description("Servidor de desenvolvimento")));
+//                .tags(Arrays.asList(
+//                        createTag("pautas", "Gerenciamento de pautas para votação"),
+//                        createTag("sessoes", "Gerenciamento de sessões de votação"),
+//                        createTag("votos", "Registro e contabilização de votos"),
+//                        createTag("associados", "Gerenciamento de associados")));
     }
 
     private Tag createTag(String name, String description) {

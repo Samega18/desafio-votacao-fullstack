@@ -7,9 +7,13 @@ import com.cooperativa.sistema.votacao.service.SessaoVotacaoService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * REST controller for managing voting sessions
@@ -85,6 +89,25 @@ public class SessaoVotacaoController {
     public ResponseEntity<ResultadoVotacaoDTO> obterResultado(@PathVariable Long id) {
         log.info("REST request para obter resultado da sessão de votação: {}", id);
         ResultadoVotacaoDTO result = sessaoService.obterResultado(id);
+        return ResponseEntity.ok(result);
+    }
+    
+    /**
+     * GET /api/v1/sessoes : List all voting sessions
+     *
+     * @param page Page number (default: 0)
+     * @param size Page size (default: 10)
+     * @return ResponseEntity with list of voting sessions
+     */
+    @GetMapping("/sessoes")
+    public ResponseEntity<List<SessaoVotacaoDTO>> listarSessoes(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        log.info("REST request para listar sessões de votação: page={}, size={}", page, size);
+        
+        PageRequest pageRequest = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "dataAbertura"));
+        List<SessaoVotacaoDTO> result = sessaoService.listarSessoes(pageRequest);
+        
         return ResponseEntity.ok(result);
     }
 }

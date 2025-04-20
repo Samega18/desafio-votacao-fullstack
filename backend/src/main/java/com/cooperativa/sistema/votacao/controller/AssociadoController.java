@@ -3,12 +3,22 @@ package com.cooperativa.sistema.votacao.controller;
 import com.cooperativa.sistema.votacao.dto.AssociadoDTO;
 import com.cooperativa.sistema.votacao.dto.AssociadoRequest;
 import com.cooperativa.sistema.votacao.service.AssociadoService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * REST controller for managing associates
@@ -16,6 +26,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/v1/associados")
 @Slf4j
+@Tag(name = "associados", description = "Gerenciamento de associados")
 public class AssociadoController {
     
     private final AssociadoService associadoService;
@@ -48,6 +59,27 @@ public class AssociadoController {
     public ResponseEntity<AssociadoDTO> obterAssociado(@PathVariable String id) {
         log.info("REST request para obter associado: {}", id);
         AssociadoDTO result = associadoService.obterAssociado(id);
+        return ResponseEntity.ok(result);
+    }
+    
+    /**
+     * GET /api/v1/associados : List all associates
+     *
+     * @param page Page number (default: 0)
+     * @param size Page size (default: 10)
+     * @return ResponseEntity with list of associates
+     */
+    @GetMapping
+    @Operation(summary = "Listar todos os associados", description = "Retorna uma lista paginada de associados")
+    @ApiResponse(responseCode = "200", description = "Associados encontrados com sucesso")
+    public ResponseEntity<List<AssociadoDTO>> listarAssociados(
+            @Parameter(description = "Número da página (começa em 0)") @RequestParam(defaultValue = "0") int page,
+            @Parameter(description = "Tamanho da página") @RequestParam(defaultValue = "10") int size) {
+        log.info("REST request para listar associados: page={}, size={}", page, size);
+        
+        PageRequest pageRequest = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "dataCadastro"));
+        List<AssociadoDTO> result = associadoService.listarAssociados(pageRequest);
+        
         return ResponseEntity.ok(result);
     }
 }
