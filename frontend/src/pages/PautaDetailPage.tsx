@@ -53,7 +53,8 @@ const PautaDetailPage: React.FC = () => {
   };
 
   const handleSessaoSuccess = () => {
-    setTabIndex(1); // Mudar para a aba de listagem de sessões após criar uma
+    fetchPauta();
+    setTabIndex(1); // Show the sessions tab so users can see their newly created session
   };
 
   if (loading) {
@@ -131,4 +132,4 @@ const PautaDetailPage: React.FC = () => {
   );
 };
 
-export default PautaDetailPage; 
+export default PautaDetailPage;

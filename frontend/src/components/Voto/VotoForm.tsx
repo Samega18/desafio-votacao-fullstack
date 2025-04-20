@@ -46,7 +46,7 @@ const VotoForm: React.FC<VotoFormProps> = ({ sessaoId, tituloPauta, onSuccess })
     try {
       setErrorMessage(null);
       
-      // Adiciona o CPF do associado encontrado ao objeto de voto
+      // Including the member's CPF in the vote data for backend validation
       const votoData: VotoRequest = {
         ...values,
         cpf: associadoEncontrado?.cpf || ''
@@ -81,6 +81,7 @@ const VotoForm: React.FC<VotoFormProps> = ({ sessaoId, tituloPauta, onSuccess })
       const associado = await AssociadoService.obterAssociado(id);
       
       if (associado) {
+        // Found the member! Now we can store their info for the voting process
         setAssociadoEncontrado(associado);
       }
     } catch (error) {
@@ -208,4 +209,4 @@ const VotoForm: React.FC<VotoFormProps> = ({ sessaoId, tituloPauta, onSuccess })
   );
 };
 
-export default VotoForm; 
+export default VotoForm;

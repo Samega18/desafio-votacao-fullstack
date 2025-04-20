@@ -23,10 +23,10 @@ const SessoesPage: React.FC = () => {
     setIsRefreshing(true);
     setRefreshKey(prevKey => prevKey + 1);
     
-    // Simular tempo de carregamento para feedback visual
+    // Give users a moment to see the loading state for better UX
     setTimeout(() => {
       setIsRefreshing(false);
-    }, 1000);
+    }, 1000); // Short delay helps users perceive the system is working
   };
 
   return (
@@ -96,4 +96,4 @@ const SessoesPage: React.FC = () => {
   );
 };
 
-export default SessoesPage; 
+export default SessoesPage;

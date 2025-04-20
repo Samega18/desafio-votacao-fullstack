@@ -47,9 +47,9 @@ const AssociadoList: React.FC = () => {
     try {
       setLoading(true);
       
-      // A busca por ID é mais específica, então vamos tratar isso primeiro
+      // First try to see if they entered a member ID directly - fastest way to find someone
       if (searchTerm && searchTerm.match(/^[0-9a-fA-F-]{36}$/)) {
-        // Parece um UUID, então busca pelo ID
+        // This looks like a UUID, so let's try a direct lookup
         try {
           const associado = await AssociadoService.obterAssociado(searchTerm);
           if (associado) {
@@ -65,10 +65,10 @@ const AssociadoList: React.FC = () => {
         }
       }
       
-      // Se não for um ID ou o ID não for encontrado, busca como nome ou CPF
+      // If it's not an ID or we couldn't find it, search by name or CPF instead
       const response = await AssociadoService.listarAssociados(pageNumber, size, searchTerm);
       
-      // Verifica se a resposta tem a estrutura esperada
+      // The API can return data in different formats, so we need to handle both cases
       const content = Array.isArray(response) ? response : (response.content || []);
       const total = Array.isArray(response) 
         ? Math.ceil(response.length / size) 
@@ -351,4 +351,4 @@ const AssociadoList: React.FC = () => {
   );
 };
 
-export default AssociadoList; 
+export default AssociadoList;

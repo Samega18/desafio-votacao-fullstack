@@ -12,7 +12,7 @@ const AssociadosPage: React.FC = () => {
   };
 
   const handleFormSuccess = () => {
-    setTabIndex(0); // Mudar para a aba de listagem após cadastrar um associado
+    setTabIndex(0); // Take users back to the member list so they can see their new entry
   };
 
   return (
@@ -48,4 +48,4 @@ const AssociadosPage: React.FC = () => {
   );
 };
 
-export default AssociadosPage; 
+export default AssociadosPage;

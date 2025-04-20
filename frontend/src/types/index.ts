@@ -113,7 +113,7 @@ export interface StatusVotacao {
   status: 'ABLE_TO_VOTE' | 'UNABLE_TO_VOTE';
 }
 
-// Interfaces para paginação
+// These interfaces help us work with paginated data from the backend
 export interface PageResponse<T> {
   content: T[];
   totalPages: number;
@@ -129,4 +129,4 @@ export interface PageRequest {
   page: number;
   size: number;
   sort?: string;
-} 
+}

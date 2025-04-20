@@ -55,7 +55,7 @@ const SessaoList: React.FC<SessaoListProps> = ({ pautaId }) => {
       const response = await SessaoVotacaoService.listarSessoes(pageNumber, size);
       console.log('Resposta obtida:', response);
       
-      // Verifica se response.content existe
+      // Need to verify the response structure before continuing
       if (!response.content) {
         console.error('Resposta inválida da API - content não encontrado:', response);
         setError('Formato de resposta inválido. Entre em contato com o suporte.');
@@ -64,7 +64,7 @@ const SessaoList: React.FC<SessaoListProps> = ({ pautaId }) => {
         return;
       }
       
-      // Se temos um ID de pauta, filtramos para mostrar apenas as sessões dessa pauta
+      // When viewing a specific agenda, filter to show only its sessions
       const data = pautaId 
         ? response.content.filter(sessao => sessao.pautaId === pautaId)
         : response.content;
@@ -96,14 +96,14 @@ const SessaoList: React.FC<SessaoListProps> = ({ pautaId }) => {
   const filterSessoes = () => {
     let filtered = [...sessoes];
     
-    // Filtragem por termo de busca
+    // Apply text search filter based on what the user typed
     if (searchTerm) {
       filtered = filtered.filter(sessao => 
         sessao.tituloPauta.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
     
-    // Filtragem por status
+    // Filter by session status to help users find what they need
     if (statusFilter) {
       filtered = filtered.filter(sessao => {
         if (statusFilter === 'ativa') {
@@ -329,4 +329,4 @@ const SessaoList: React.FC<SessaoListProps> = ({ pautaId }) => {
   );
 };
 
-export default SessaoList; 
+export default SessaoList;

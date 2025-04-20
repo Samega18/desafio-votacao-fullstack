@@ -12,7 +12,7 @@ const PautasPage: React.FC = () => {
   };
 
   const handleFormSuccess = () => {
-    setTabIndex(0); // Mudar para a aba de listagem após criar uma pauta
+    setTabIndex(0); // Return to the list view so users can see their new item
   };
 
   return (
@@ -48,4 +48,4 @@ const PautasPage: React.FC = () => {
   );
 };
 
-export default PautasPage; 
+export default PautasPage;
