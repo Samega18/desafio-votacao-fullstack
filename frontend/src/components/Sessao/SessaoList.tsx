@@ -86,7 +86,7 @@ const SessaoList: React.FC<SessaoListProps> = ({ pautaId }) => {
   };
 
   useEffect(() => {
-    fetchSessoes();
+    fetchSessoes(page, pageSize);
   }, [page, pageSize, pautaId]);
 
   useEffect(() => {
@@ -121,12 +121,18 @@ const SessaoList: React.FC<SessaoListProps> = ({ pautaId }) => {
   };
 
   const handleChangePage = (event: React.ChangeEvent<unknown>, value: number) => {
-    setPage(value - 1);
+    const newPage = value - 1;
+    setPage(newPage);
+    // Chamamos fetchSessoes diretamente para garantir que os dados sejam atualizados imediatamente
+    fetchSessoes(newPage, pageSize);
   };
 
   const handleChangePageSize = (event: SelectChangeEvent<number>) => {
-    setPageSize(event.target.value as number);
+    const newSize = event.target.value as number;
+    setPageSize(newSize);
     setPage(0);
+    // Chamamos fetchSessoes diretamente para garantir que os dados sejam atualizados imediatamente
+    fetchSessoes(0, newSize);
   };
 
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {

@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import org.springframework.data.domain.Page;
 
 /**
  * REST controller for managing voting sessions
@@ -100,13 +101,13 @@ public class SessaoVotacaoController {
      * @return ResponseEntity with list of voting sessions
      */
     @GetMapping("/sessoes")
-    public ResponseEntity<List<SessaoVotacaoDTO>> listarSessoes(
+    public ResponseEntity<Page<SessaoVotacaoDTO>> listarSessoes(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
         log.info("REST request para listar sessões de votação: page={}, size={}", page, size);
         
         PageRequest pageRequest = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "dataAbertura"));
-        List<SessaoVotacaoDTO> result = sessaoService.listarSessoes(pageRequest);
+        Page<SessaoVotacaoDTO> result = sessaoService.listarSessoes(pageRequest);
         
         return ResponseEntity.ok(result);
     }

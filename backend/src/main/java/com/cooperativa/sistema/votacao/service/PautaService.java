@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import org.springframework.data.domain.Page;
 
 /**
  * Service for managing voting agendas
@@ -52,12 +53,12 @@ public class PautaService {
      * List all agendas with pagination
      * 
      * @param pageable Pagination information
-     * @return List of agenda DTOs
+     * @return Page of agenda DTOs
      */
     @Transactional(readOnly = true)
-    public List<PautaDTO> listarPautas(Pageable pageable) {
+    public Page<PautaDTO> listarPautas(Pageable pageable) {
         log.info("Listando pautas");
-        return mapper.toDtoList(pautaRepository.findAll(pageable).getContent());
+        return pautaRepository.findAll(pageable).map(mapper::toDto);
     }
     
     /**

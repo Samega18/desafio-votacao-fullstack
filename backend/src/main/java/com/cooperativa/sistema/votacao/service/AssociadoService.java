@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.util.List;
+import org.springframework.data.domain.Page;
 import java.util.UUID;
 
 /**
@@ -88,12 +89,12 @@ public class AssociadoService {
      * List all associates with pagination
      * 
      * @param pageable Pagination information
-     * @return List of associate DTOs
+     * @return Page of associate DTOs
      */
     @Transactional(readOnly = true)
-    public List<AssociadoDTO> listarAssociados(Pageable pageable) {
+    public Page<AssociadoDTO> listarAssociados(Pageable pageable) {
         log.info("Listando associados");
-        return mapper.toDtoList(associadoRepository.findAll(pageable).getContent());
+        return associadoRepository.findAll(pageable).map(mapper::toDto);
     }
     
     /**

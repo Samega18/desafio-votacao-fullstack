@@ -19,6 +19,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import org.springframework.data.domain.Page;
 
 /**
  * REST controller for managing associates
@@ -70,15 +71,15 @@ public class AssociadoController {
      * @return ResponseEntity with list of associates
      */
     @GetMapping
-    @Operation(summary = "Listar todos os associados", description = "Retorna uma lista paginada de associados")
+    @Operation(summary = "Listar todos os associados", description = "Retorna uma página de associados")
     @ApiResponse(responseCode = "200", description = "Associados encontrados com sucesso")
-    public ResponseEntity<List<AssociadoDTO>> listarAssociados(
+    public ResponseEntity<Page<AssociadoDTO>> listarAssociados(
             @Parameter(description = "Número da página (começa em 0)") @RequestParam(defaultValue = "0") int page,
             @Parameter(description = "Tamanho da página") @RequestParam(defaultValue = "10") int size) {
         log.info("REST request para listar associados: page={}, size={}", page, size);
         
         PageRequest pageRequest = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "dataCadastro"));
-        List<AssociadoDTO> result = associadoService.listarAssociados(pageRequest);
+        Page<AssociadoDTO> result = associadoService.listarAssociados(pageRequest);
         
         return ResponseEntity.ok(result);
     }

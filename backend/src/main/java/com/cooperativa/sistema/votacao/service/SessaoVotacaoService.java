@@ -29,6 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
+import org.springframework.data.domain.Page;
 import java.util.Map;
 
 /**
@@ -264,11 +265,11 @@ public class SessaoVotacaoService {
      * List all voting sessions with pagination
      * 
      * @param pageable Pagination information
-     * @return List of session DTOs
+     * @return Page of session DTOs
      */
     @Transactional(readOnly = true)
-    public List<SessaoVotacaoDTO> listarSessoes(Pageable pageable) {
+    public Page<SessaoVotacaoDTO> listarSessoes(Pageable pageable) {
         log.info("Listando sessões de votação");
-        return mapper.toDtoList(sessaoRepository.findAll(pageable).getContent());
+        return sessaoRepository.findAll(pageable).map(mapper::toDto);
     }
 }

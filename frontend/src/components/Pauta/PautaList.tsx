@@ -72,12 +72,18 @@ const PautaList: React.FC = () => {
   }, [searchTerm, pautas]);
 
   const handleChangePage = (event: React.ChangeEvent<unknown>, value: number) => {
-    setPage(value - 1);
+    const newPage = value - 1;
+    setPage(newPage);
+    // Chamamos fetchPautas diretamente para garantir que os dados sejam atualizados imediatamente
+    fetchPautas(newPage, pageSize);
   };
 
   const handleChangePageSize = (event: SelectChangeEvent<number>) => {
-    setPageSize(event.target.value as number);
+    const newSize = event.target.value as number;
+    setPageSize(newSize);
     setPage(0);
+    // Chamamos fetchPautas diretamente para garantir que os dados sejam atualizados imediatamente
+    fetchPautas(0, newSize);
   };
 
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -233,4 +239,4 @@ const PautaList: React.FC = () => {
   );
 };
 
-export default PautaList; 
+export default PautaList;

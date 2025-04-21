@@ -89,7 +89,7 @@ const AssociadoList: React.FC = () => {
   };
 
   useEffect(() => {
-    fetchAssociados();
+    fetchAssociados(page, pageSize);
   }, [page, pageSize]);
 
   useEffect(() => {
@@ -102,12 +102,18 @@ const AssociadoList: React.FC = () => {
   }, [statusFilter, associados]);
 
   const handleChangePage = (event: React.ChangeEvent<unknown>, value: number) => {
-    setPage(value - 1);
+    const newPage = value - 1;
+    setPage(newPage);
+    // Chamamos fetchAssociados diretamente para garantir que os dados sejam atualizados imediatamente
+    fetchAssociados(newPage, pageSize);
   };
 
   const handleChangePageSize = (event: SelectChangeEvent<number>) => {
-    setPageSize(event.target.value as number);
+    const newSize = event.target.value as number;
+    setPageSize(newSize);
     setPage(0);
+    // Chamamos fetchAssociados diretamente para garantir que os dados sejam atualizados imediatamente
+    fetchAssociados(0, newSize);
   };
 
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {

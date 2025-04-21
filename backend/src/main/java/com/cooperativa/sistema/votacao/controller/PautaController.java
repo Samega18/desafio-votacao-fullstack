@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import org.springframework.data.domain.Page;
 
 /**
  * REST controller for managing voting agendas
@@ -50,13 +51,13 @@ public class PautaController {
      * @return ResponseEntity with list of agendas
      */
     @GetMapping
-    public ResponseEntity<List<PautaDTO>> listarPautas(
+    public ResponseEntity<Page<PautaDTO>> listarPautas(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
         log.info("REST request para listar pautas: page={}, size={}", page, size);
         
         PageRequest pageRequest = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "dataCriacao"));
-        List<PautaDTO> result = pautaService.listarPautas(pageRequest);
+        Page<PautaDTO> result = pautaService.listarPautas(pageRequest);
         
         return ResponseEntity.ok(result);
     }
