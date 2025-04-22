@@ -14,9 +14,10 @@ public class WebClientConfig {
     
     /**
      * RestTemplate for making HTTP requests
+     * Nome alterado para evitar conflito com o bean em RestTemplateConfig
      */
-    @Bean
-    public RestTemplate restTemplate() {
+    @Bean(name = "webClientRestTemplate")
+    public RestTemplate webClientRestTemplate() {
         return new RestTemplate();
     }
     

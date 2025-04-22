@@ -24,6 +24,9 @@ public class OpenApiConfig {
 
     @Value("${api.version}")
     private String apiVersion;
+    
+    @Value("${SERVER_URL:http://localhost:8080}")
+    private String serverUrl;
 
     @Bean
     public OpenAPI customOpenAPI() {
@@ -42,8 +45,8 @@ public class OpenApiConfig {
                                 .url("https://www.cooperativa.com/suporte")))
                 .servers(List.of(
                         new Server()
-                                .url("http://localhost:8080")
-                                .description("Servidor de desenvolvimento")));
+                                .url(serverUrl)
+                                .description("Servidor da aplicação")));
 //                .tags(Arrays.asList(
 //                        createTag("pautas", "Gerenciamento de pautas para votação"),
 //                        createTag("sessoes", "Gerenciamento de sessões de votação"),
