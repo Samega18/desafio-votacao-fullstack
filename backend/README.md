@@ -81,6 +81,8 @@ http://localhost:8080/swagger-ui.html
 - Registro de votos por associados
 - Contabilização automática de resultados
 - Consulta de resultados de votações
+- Cadastro e Visualização de Associados
+- Validação de CPF para Votar em Sessões(Fake)
 
 ## Estrutura do Projeto
 
