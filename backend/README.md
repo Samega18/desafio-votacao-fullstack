@@ -21,6 +21,20 @@ Este projeto implementa um sistema de votação para cooperativas, permitindo a 
 - Springdoc OpenAPI (Swagger)
 - H2 Database (para ambiente de desenvolvimento)
 
+## Funcionalidades Adicionais
+
+### Validação de CPF (Bônus 1)
+Implementação de um serviço fake que simula a validação de CPFs e retorna aleatoriamente se um associado está apto a votar.
+
+### Otimização de Performance (Bônus 2)
+- Cache em múltiplas camadas
+- Otimização de queries com índices
+- Paginação em resultados extensos
+- Possibilidade de escalabilidade horizontal
+
+### Versionamento da API (Bônus 3)
+Adotado o versionamento via URI (ex: /api/v1/) para permitir evolução da API sem quebrar compatibilidade com clientes existentes.
+
 ## Configuração do Ambiente
 
 ### Banco de Dados
