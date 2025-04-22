@@ -31,16 +31,31 @@ const SessoesPage: React.FC = () => {
 
   return (
     <Box>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+      <Box sx={{ 
+        display: 'flex', 
+        flexDirection: { xs: 'column', sm: 'row' },
+        justifyContent: 'space-between', 
+        alignItems: { xs: 'flex-start', sm: 'center' }, 
+        mb: 3,
+        gap: 2
+      }}>
         <Typography variant="h4" component="h1">
           Sessões de Votação
         </Typography>
-        <Box>
+        <Box sx={{ 
+          display: 'flex', 
+          flexDirection: { xs: 'column', sm: 'row' },
+          gap: 1,
+          width: { xs: '100%', sm: 'auto' }
+        }}>
           <Button
             component={RouterLink}
             to="/pautas"
             variant="outlined"
-            sx={{ mr: 2 }}
+            fullWidth
+            sx={{ 
+              minWidth: { xs: '100%', sm: 'auto' }
+            }}
           >
             Ir para Pautas
           </Button>
@@ -48,6 +63,10 @@ const SessoesPage: React.FC = () => {
             component={RouterLink}
             to="/"
             variant="outlined"
+            fullWidth
+            sx={{ 
+              minWidth: { xs: '100%', sm: 'auto' }
+            }}
           >
             Voltar para Início
           </Button>
@@ -71,11 +90,6 @@ const SessoesPage: React.FC = () => {
             Aqui você pode visualizar todas as sessões de votação cadastradas no sistema. 
             As sessões permitem que os associados votem nas pautas durante um período determinado.
           </Typography>
-          {/* <Typography variant="body2" color="text.secondary" paragraph>
-            • Sessões <strong>Em andamento</strong> estão abertas para votação.<br />
-            • Sessões <strong>Encerradas</strong> já tiveram seus votos computados e o resultado pode ser consultado.<br />
-            • Sessões <strong>Fechadas</strong> tiveram seu prazo expirado e não aceitam mais votos.
-          </Typography> */}
           <Box sx={{ mt: 2 }}>
             <Button
               component={RouterLink}

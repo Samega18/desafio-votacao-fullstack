@@ -43,7 +43,7 @@ const SessaoForm: React.FC<SessaoFormProps> = ({ pautaId, onSuccess }) => {
       <Typography variant="h5" component="h2" gutterBottom>
         Abrir Sessão de Votação
       </Typography>
-      <Typography variant="body1" gutterBottom>
+      <Typography variant="body1" sx={{ mb: 3 }}>
         Defina o tempo de duração da sessão. Após este período, a sessão será encerrada automaticamente.
       </Typography>
       <Formik
@@ -82,4 +82,4 @@ const SessaoForm: React.FC<SessaoFormProps> = ({ pautaId, onSuccess }) => {
   );
 };
 
-export default SessaoForm; 
+export default SessaoForm;

@@ -23,5 +23,6 @@ public class AssociadoRequest {
     
     @NotBlank(message = "O nome é obrigatório")
     @Size(min = 3, max = 100, message = "O nome deve ter entre 3 e 100 caracteres")
+    @Pattern(regexp = "^[^0-9]*$", message = "O nome não pode conter números")
     private String nome;
 }

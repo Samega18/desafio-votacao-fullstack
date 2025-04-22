@@ -83,4 +83,29 @@ public class AssociadoController {
         
         return ResponseEntity.ok(result);
     }
+    
+    /**
+     * GET /api/v1/associados/busca : Search associates by name or CPF
+     *
+     * @param nome Name to search for (can be partial)
+     * @param cpf CPF to search for (can be partial)
+     * @param page Page number (default: 0)
+     * @param size Page size (default: 10)
+     * @return ResponseEntity with list of associates matching the criteria
+     */
+    @GetMapping("/busca")
+    @Operation(summary = "Buscar associados por nome ou CPF", description = "Retorna uma página de associados que correspondem aos critérios de busca")
+    @ApiResponse(responseCode = "200", description = "Associados encontrados com sucesso")
+    public ResponseEntity<Page<AssociadoDTO>> buscarAssociados(
+            @Parameter(description = "Nome do associado (parcial)") @RequestParam(required = false) String nome,
+            @Parameter(description = "CPF do associado (parcial)") @RequestParam(required = false) String cpf,
+            @Parameter(description = "Número da página (começa em 0)") @RequestParam(defaultValue = "0") int page,
+            @Parameter(description = "Tamanho da página") @RequestParam(defaultValue = "10") int size) {
+        log.info("REST request para buscar associados por nome: {} ou CPF: {}, page={}, size={}", nome, cpf, page, size);
+        
+        PageRequest pageRequest = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "dataCadastro"));
+        Page<AssociadoDTO> result = associadoService.buscarAssociados(nome, cpf, pageRequest);
+        
+        return ResponseEntity.ok(result);
+    }
 }

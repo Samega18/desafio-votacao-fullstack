@@ -39,8 +39,8 @@ const AssociadoList: React.FC = () => {
   const [totalPages, setTotalPages] = useState(0);
   const [pageSize, setPageSize] = useState(5);
   const [searchTerm, setSearchTerm] = useState('');
+  const [tipoBusca, setTipoBusca] = useState<'nome' | 'cpf'>('nome');
   const [filteredAssociados, setFilteredAssociados] = useState<AssociadoDTO[]>([]);
-  const [statusFilter, setStatusFilter] = useState<boolean | null>(null);
   const [copySuccess, setCopySuccess] = useState(false);
 
   const fetchAssociados = async (pageNumber = page, size = pageSize) => {
@@ -51,10 +51,11 @@ const AssociadoList: React.FC = () => {
       if (searchTerm && searchTerm.match(/^[0-9a-fA-F-]{36}$/)) {
         // This looks like a UUID, so let's try a direct lookup
         try {
-          const associado = await AssociadoService.obterAssociado(searchTerm);
-          if (associado) {
-            setAssociados([associado]);
-            setFilteredAssociados([associado]);
+          const response = await AssociadoService.listarAssociados();
+          const content = Array.isArray(response) ? response : (response.content || []);
+          if (content) {
+            setAssociados(content);
+            setFilteredAssociados(content);
             setTotalPages(1);
             setError(null);
             setLoading(false);
@@ -66,7 +67,7 @@ const AssociadoList: React.FC = () => {
       }
       
       // If it's not an ID or we couldn't find it, search by name or CPF instead
-      const response = await AssociadoService.listarAssociados(pageNumber, size, searchTerm);
+      const response = await AssociadoService.listarAssociados(pageNumber, size, searchTerm, tipoBusca);
       
       // The API can return data in different formats, so we need to handle both cases
       const content = Array.isArray(response) ? response : (response.content || []);
@@ -93,18 +94,12 @@ const AssociadoList: React.FC = () => {
   }, [page, pageSize]);
 
   useEffect(() => {
-    if (statusFilter !== null) {
-      const filtered = associados.filter(associado => associado.ativo === statusFilter);
-      setFilteredAssociados(filtered);
-    } else {
-      setFilteredAssociados(associados);
-    }
-  }, [statusFilter, associados]);
+    setFilteredAssociados(associados);
+  }, [associados]);
 
   const handleChangePage = (event: React.ChangeEvent<unknown>, value: number) => {
     const newPage = value - 1;
     setPage(newPage);
-    // Chamamos fetchAssociados diretamente para garantir que os dados sejam atualizados imediatamente
     fetchAssociados(newPage, pageSize);
   };
 
@@ -112,7 +107,6 @@ const AssociadoList: React.FC = () => {
     const newSize = event.target.value as number;
     setPageSize(newSize);
     setPage(0);
-    // Chamamos fetchAssociados diretamente para garantir que os dados sejam atualizados imediatamente
     fetchAssociados(0, newSize);
   };
 
@@ -120,14 +114,15 @@ const AssociadoList: React.FC = () => {
     setSearchTerm(event.target.value);
   };
 
+  const handleTipoBuscaChange = (event: SelectChangeEvent<'nome' | 'cpf'>) => {
+    setTipoBusca(event.target.value as 'nome' | 'cpf');
+  };
+
   const handleSearchSubmit = (event: React.FormEvent) => {
     event.preventDefault();
     fetchAssociados(0, pageSize);
   };
 
-  const handleStatusFilter = (status: boolean | null) => {
-    setStatusFilter(status);
-  };
 
   const handleCopyId = (id: string) => {
     navigator.clipboard.writeText(id)
@@ -163,75 +158,71 @@ const AssociadoList: React.FC = () => {
     );
   }
 
-  if (associados.length === 0) {
-    return (
-      <Paper sx={{ p: 3, textAlign: 'center' }}>
-        <Typography variant="h6" component="div" gutterBottom>
-          Nenhum associado encontrado
-        </Typography>
-      </Paper>
-    );
-  }
-
   return (
     <Box>
       <Box sx={{ mb: 3 }}>
         <form onSubmit={handleSearchSubmit}>
-          <TextField
-            fullWidth
-            variant="outlined"
-            placeholder="Buscar associado por nome ou CPF..."
-            value={searchTerm}
-            onChange={handleSearch}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <SearchIcon />
-                </InputAdornment>
-              ),
-              endAdornment: (
-                <InputAdornment position="end">
-                  <Button 
-                    type="submit" 
-                    variant="contained" 
-                    size="small"
-                  >
-                    Buscar
-                  </Button>
-                </InputAdornment>
-              )
-            }}
-          />
+          <Stack 
+            direction={{ xs: 'column', md: 'row' }} 
+            spacing={2} 
+            alignItems={{ xs: 'stretch', md: 'flex-start' }}
+          >
+            <FormControl 
+              variant="outlined" 
+              sx={{ 
+                width: { xs: '100%', md: '200px' },
+                minWidth: { xs: '100%', md: '200px' }
+              }}
+            >
+              <InputLabel id="tipo-busca-label">Buscar por</InputLabel>
+              <Select
+                labelId="tipo-busca-label"
+                value={tipoBusca}
+                onChange={handleTipoBuscaChange}
+                label="Buscar por"
+                size="medium"
+                fullWidth
+              >
+                <MenuItem value="nome">Nome</MenuItem>
+                <MenuItem value="cpf">CPF</MenuItem>
+              </Select>
+            </FormControl>
+            <TextField
+              variant="outlined"
+              placeholder={tipoBusca === 'nome' ? "Buscar associado por nome..." : "Buscar associado por CPF..."}
+              value={searchTerm}
+              onChange={handleSearch}
+              fullWidth
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <SearchIcon />
+                  </InputAdornment>
+                ),
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <Button 
+                      type="submit" 
+                      variant="contained" 
+                      size="small"
+                    >
+                      Buscar
+                    </Button>
+                  </InputAdornment>
+                )
+              }}
+            />
+          </Stack>
         </form>
       </Box>
 
-      <Box sx={{ mb: 3, display: 'flex', gap: 1 }}>
-        <Button 
-          variant={statusFilter === null ? "contained" : "outlined"} 
-          onClick={() => handleStatusFilter(null)}
-          size="small"
-        >
-          Todos
-        </Button>
-        <Button 
-          variant={statusFilter === true ? "contained" : "outlined"}
-          color="success"
-          onClick={() => handleStatusFilter(true)}
-          size="small"
-        >
-          Ativos
-        </Button>
-        <Button 
-          variant={statusFilter === false ? "contained" : "outlined"}
-          color="error"
-          onClick={() => handleStatusFilter(false)}
-          size="small"
-        >
-          Inativos
-        </Button>
-      </Box>
-
-      {filteredAssociados.length === 0 ? (
+      {associados.length === 0 ? (
+        <Paper sx={{ p: 3, textAlign: 'center', mt: 2 }}>
+          <Typography variant="h6" component="div" gutterBottom>
+            Nenhum associado encontrado
+          </Typography>
+        </Paper>
+      ) : filteredAssociados.length === 0 ? (
         <Paper sx={{ p: 3, textAlign: 'center', mt: 2 }}>
           <Typography variant="body1">
             Nenhum associado encontrado com os critérios de busca.
@@ -239,76 +230,146 @@ const AssociadoList: React.FC = () => {
         </Paper>
       ) : (
         <>
-          <TableContainer component={Paper}>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell width="40%">ID</TableCell>
-                  <TableCell width="25%">Nome</TableCell>
-                  <TableCell width="20%">CPF</TableCell>
-                  <TableCell align="center" width="15%">Status</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {filteredAssociados.map((associado) => (
-                  <TableRow key={associado.id}>
-                    <TableCell width="40%">
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <Paper 
-                          variant="outlined" 
-                          sx={{ 
-                            p: 0.8, 
-                            flex: 1, 
-                            backgroundColor: '#f8f9fa',
-                            borderColor: '#e0e0e0',
-                            maxWidth: 'calc(100% - 45px)'
-                          }}
-                        >
-                          <Typography 
-                            variant="body2" 
+          {/* Versão para desktop */}
+          <Box sx={{ display: { xs: 'none', md: 'block' } }}>
+            <TableContainer component={Paper}>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell width="40%">ID</TableCell>
+                    <TableCell width="25%">Nome</TableCell>
+                    <TableCell width="20%">CPF</TableCell>
+                    {/* <TableCell align="center" width="15%">Status</TableCell> */}
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {filteredAssociados.map((associado) => (
+                    <TableRow key={associado.id}>
+                      <TableCell width="40%">
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                          <Paper 
+                            variant="outlined" 
                             sx={{ 
-                              fontSize: '0.9rem', 
-                              fontFamily: 'monospace',
-                              color: '#555',
-                              overflow: 'hidden',
-                              textOverflow: 'ellipsis',
-                              whiteSpace: 'nowrap'
+                              p: 0.8, 
+                              flex: 1, 
+                              backgroundColor: '#f8f9fa',
+                              borderColor: '#e0e0e0',
+                              maxWidth: 'calc(100% - 45px)'
                             }}
                           >
-                            {associado.id}
-                          </Typography>
-                        </Paper>
-                        <Tooltip title="Copiar ID">
-                          <IconButton 
-                            size="small" 
-                            onClick={() => handleCopyId(associado.id)}
-                            color="primary"
-                            sx={{ 
-                              backgroundColor: '#f1f3f9',
-                              '&:hover': {
-                                backgroundColor: '#e3e7f7'
-                              }
-                            }}
-                          >
-                            <ContentCopyIcon fontSize="small" />
-                          </IconButton>
-                        </Tooltip>
-                      </Box>
-                    </TableCell>
-                    <TableCell width="25%">{associado.nome}</TableCell>
-                    <TableCell width="20%">{associado.cpf}</TableCell>
-                    <TableCell align="center" width="15%">
-                      {associado.ativo ? (
+                            <Typography 
+                              variant="body2" 
+                              sx={{ 
+                                fontSize: '0.9rem', 
+                                fontFamily: 'monospace',
+                                color: '#555',
+                                overflow: 'hidden',
+                                textOverflow: 'ellipsis',
+                                whiteSpace: 'nowrap'
+                              }}
+                            >
+                              {associado.id}
+                            </Typography>
+                          </Paper>
+                          <Tooltip title="Copiar ID">
+                            <IconButton 
+                              size="small" 
+                              onClick={() => handleCopyId(associado.id)}
+                              color="primary"
+                              sx={{ 
+                                backgroundColor: '#f1f3f9',
+                                '&:hover': {
+                                  backgroundColor: '#e3e7f7'
+                                }
+                              }}
+                            >
+                              <ContentCopyIcon fontSize="small" />
+                            </IconButton>
+                          </Tooltip>
+                        </Box>
+                      </TableCell>
+                      <TableCell width="25%">{associado.nome}</TableCell>
+                      <TableCell width="20%">{associado.cpf}</TableCell>
+                      {/* <TableCell align="center" width="15%">
+                        {associado.ativo ? (
+                          <Chip label="Ativo" color="success" size="small" />
+                        ) : (
+                          <Chip label="Inativo" color="error" size="small" />
+                        )}
+                      </TableCell> */}
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </Box>
+
+          {/* Versão para mobile */}
+          <Box sx={{ display: { xs: 'block', md: 'none' } }}>
+            <Stack spacing={2}>
+              {filteredAssociados.map((associado) => (
+                <Paper key={associado.id} sx={{ p: 2 }}>
+                  <Stack spacing={1}>
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <Typography variant="subtitle1" fontWeight="bold">
+                        {associado.nome}
+                      </Typography>
+                      {/* {associado.ativo ? (
                         <Chip label="Ativo" color="success" size="small" />
                       ) : (
                         <Chip label="Inativo" color="error" size="small" />
-                      )}
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
+                      )} */}
+                    </Box>
+                    
+                    <Typography variant="body2" color="text.secondary">
+                      CPF: {associado.cpf}
+                    </Typography>
+                    
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <Paper 
+                        variant="outlined" 
+                        sx={{ 
+                          p: 0.8, 
+                          flex: 1, 
+                          backgroundColor: '#f8f9fa',
+                          borderColor: '#e0e0e0'
+                        }}
+                      >
+                        <Typography 
+                          variant="body2" 
+                          sx={{ 
+                            fontSize: '0.85rem', 
+                            fontFamily: 'monospace',
+                            color: '#555',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                            whiteSpace: 'nowrap'
+                          }}
+                        >
+                          {associado.id}
+                        </Typography>
+                      </Paper>
+                      <Tooltip title="Copiar ID">
+                        <IconButton 
+                          size="small" 
+                          onClick={() => handleCopyId(associado.id)}
+                          color="primary"
+                          sx={{ 
+                            backgroundColor: '#f1f3f9',
+                            '&:hover': {
+                              backgroundColor: '#e3e7f7'
+                            }
+                          }}
+                        >
+                          <ContentCopyIcon fontSize="small" />
+                        </IconButton>
+                      </Tooltip>
+                    </Box>
+                  </Stack>
+                </Paper>
+              ))}
+            </Stack>
+          </Box>
 
           <Stack 
             direction={{ xs: 'column', sm: 'row' }} 
@@ -317,13 +378,14 @@ const AssociadoList: React.FC = () => {
             justifyContent="space-between"
             sx={{ mt: 3 }}
           >
-            <FormControl variant="outlined" sx={{ minWidth: 120 }}>
+            <FormControl variant="outlined" sx={{ minWidth: { xs: '100%', sm: 120 } }}>
               <InputLabel id="items-per-page-label">Itens por página</InputLabel>
               <Select
                 labelId="items-per-page-label"
                 value={pageSize}
                 onChange={handleChangePageSize}
                 label="Itens por página"
+                fullWidth
               >
                 <MenuItem value={5}>5</MenuItem>
                 <MenuItem value={10}>10</MenuItem>
@@ -331,14 +393,17 @@ const AssociadoList: React.FC = () => {
               </Select>
             </FormControl>
 
-            <Pagination 
-              count={totalPages} 
-              page={page + 1} 
-              onChange={handleChangePage} 
-              variant="outlined" 
-              shape="rounded" 
-              color="primary"
-            />
+            <Box sx={{ width: { xs: '100%', sm: 'auto' }, display: 'flex', justifyContent: 'center' }}>
+              <Pagination 
+                count={totalPages} 
+                page={page + 1} 
+                onChange={handleChangePage} 
+                variant="outlined" 
+                shape="rounded" 
+                color="primary"
+                size="medium"
+              />
+            </Box>
           </Stack>
         </>
       )}

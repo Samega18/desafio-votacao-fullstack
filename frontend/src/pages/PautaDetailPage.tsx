@@ -112,7 +112,20 @@ const PautaDetailPage: React.FC = () => {
       </Card>
 
       <Paper sx={{ mb: 3 }}>
-        <Tabs value={tabIndex} onChange={handleTabChange} centered>
+        <Tabs 
+          value={tabIndex} 
+          onChange={handleTabChange} 
+          centered
+          variant="fullWidth"
+          sx={{
+            '& .MuiTab-root': {
+              fontSize: { xs: '0.75rem', sm: '0.875rem' },
+              minWidth: 0,
+              p: { xs: 1, sm: 2 },
+              textTransform: 'none'
+            }
+          }}
+        >
           <Tab label="Abrir Sessão de Votação" />
           <Tab label="Sessões Existentes" />
         </Tabs>

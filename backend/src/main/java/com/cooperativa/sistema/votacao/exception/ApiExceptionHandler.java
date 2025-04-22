@@ -81,6 +81,7 @@ public class ApiExceptionHandler {
             String fieldName = ((FieldError) error).getField();
             String errorMessage = error.getDefaultMessage();
             errors.put(fieldName, errorMessage);
+            log.warn("Erro de validação no campo '{}': {}", fieldName, errorMessage);
         });
         
         ErrorResponse response = new ErrorResponse(

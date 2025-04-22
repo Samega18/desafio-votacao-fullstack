@@ -12,20 +12,24 @@ export const AssociadoService = {
     return response.data;
   },
   
-  listarAssociados: async (page = 0, size = 10, nome?: string, cpf?: string): Promise<PageResponse<AssociadoDTO>> => {
+  listarAssociados: async (page = 0, size = 10, termo?: string, tipoBusca: 'nome' | 'cpf' = 'nome'): Promise<PageResponse<AssociadoDTO>> => {
     const params: Record<string, any> = { page, size };
     
-    if (nome) params.nome = nome;
-    if (cpf) params.cpf = cpf;
+    if (termo) {
+      if (tipoBusca === 'nome') {
+        params.nome = termo;
+      } else if (tipoBusca === 'cpf') {
+        params.cpf = termo;
+      }
+    }
     
-    const response = await api.get('/associados', { params });
+    const response = await api.get('/associados/busca', { params });
     return response.data;
   },
   
   buscarPorCpf: async (cpf: string): Promise<AssociadoDTO> => {
-    // We have to use the list endpoint with a filter since there's no dedicated CPF endpoint
-    // Limiting to one result since we only need the matching member
-    const response = await api.get('/associados', { 
+    // Usando o novo endpoint de busca com o filtro por CPF
+    const response = await api.get('/associados/busca', { 
       params: { 
         cpf,
         page: 0,

@@ -8,8 +8,6 @@ import {
   Chip
 } from '@mui/material';
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
-import { format } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
 import { ResultadoVotacaoDTO } from '../../types';
 
 interface ResultadoDisplayProps {

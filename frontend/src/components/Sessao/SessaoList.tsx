@@ -23,7 +23,14 @@ import {
   MenuItem,
   SelectChangeEvent,
   ToggleButtonGroup,
-  ToggleButton
+  ToggleButton,
+  Card,
+  CardContent,
+  CardActions,
+  Grid,
+  useMediaQuery,
+  useTheme,
+  Divider
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import FilterListIcon from '@mui/icons-material/FilterList';
@@ -37,6 +44,8 @@ interface SessaoListProps {
 }
 
 const SessaoList: React.FC<SessaoListProps> = ({ pautaId }) => {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const [sessoes, setSessoes] = useState<SessaoVotacaoDTO[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -123,7 +132,6 @@ const SessaoList: React.FC<SessaoListProps> = ({ pautaId }) => {
   const handleChangePage = (event: React.ChangeEvent<unknown>, value: number) => {
     const newPage = value - 1;
     setPage(newPage);
-    // Chamamos fetchSessoes diretamente para garantir que os dados sejam atualizados imediatamente
     fetchSessoes(newPage, pageSize);
   };
 
@@ -131,7 +139,6 @@ const SessaoList: React.FC<SessaoListProps> = ({ pautaId }) => {
     const newSize = event.target.value as number;
     setPageSize(newSize);
     setPage(0);
-    // Chamamos fetchSessoes diretamente para garantir que os dados sejam atualizados imediatamente
     fetchSessoes(0, newSize);
   };
 
@@ -207,28 +214,28 @@ const SessaoList: React.FC<SessaoListProps> = ({ pautaId }) => {
         />
       </Box>
 
-      <Box sx={{ mb: 3, display: 'flex', alignItems: 'center' }}>
-        <FilterListIcon sx={{ mr: 1 }} />
-        <Typography variant="body2" sx={{ mr: 2 }}>
-          Filtrar por status:
-        </Typography>
-        <ToggleButtonGroup
-          value={statusFilter}
-          exclusive
-          onChange={handleStatusFilterChange}
-          aria-label="filtro de status"
-          size="small"
-        >
-          <ToggleButton value="ativa" aria-label="ativa">
-            Ativas
-          </ToggleButton>
-          <ToggleButton value="encerrada" aria-label="encerrada">
-            Encerradas
-          </ToggleButton>
-          <ToggleButton value="fechada" aria-label="fechada">
-            Fechadas
-          </ToggleButton>
-        </ToggleButtonGroup>
+      <Box sx={{ mb: 3, display: 'flex', alignItems: 'center', flexDirection: isMobile ? 'column' : 'row' }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', mb: isMobile ? 2 : 0, width: isMobile ? '100%' : 'auto' }}>
+          <FilterListIcon sx={{ mr: 1 }} />
+          <Typography variant="body2" sx={{ mr: 2 }}>
+            Filtrar por status:
+          </Typography>
+          <ToggleButtonGroup
+            value={statusFilter}
+            exclusive
+            onChange={handleStatusFilterChange}
+            aria-label="filtro de status"
+            size="small"
+            sx={{ flexGrow: isMobile ? 1 : 0 }}
+          >
+            <ToggleButton value="ativa" aria-label="ativa">
+              Ativas
+            </ToggleButton>
+            <ToggleButton value="encerrada" aria-label="encerrada">
+              Encerradas
+            </ToggleButton>
+          </ToggleButtonGroup>
+        </Box>
       </Box>
 
       {filteredSessoes.length === 0 ? (
@@ -239,65 +246,127 @@ const SessaoList: React.FC<SessaoListProps> = ({ pautaId }) => {
         </Paper>
       ) : (
         <>
-          <TableContainer component={Paper}>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>ID</TableCell>
-                  <TableCell>Pauta</TableCell>
-                  <TableCell>Abertura</TableCell>
-                  <TableCell>Fechamento</TableCell>
-                  <TableCell>Status</TableCell>
-                  <TableCell align="right">Ações</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
+          {isMobile ? (
+            <Box sx={{ mt: 2 }}>
+              <Grid container spacing={2}>
                 {filteredSessoes.map((sessao) => (
-                  <TableRow key={sessao.id}>
-                    <TableCell>{sessao.id}</TableCell>
-                    <TableCell>{sessao.tituloPauta}</TableCell>
-                    <TableCell>
-                      {format(new Date(sessao.dataAbertura), 'dd/MM/yyyy HH:mm', { locale: ptBR })}
-                    </TableCell>
-                    <TableCell>
-                      {format(new Date(sessao.dataFechamento), 'dd/MM/yyyy HH:mm', { locale: ptBR })}
-                    </TableCell>
-                    <TableCell>
-                      {sessao.encerrada ? (
-                        <Chip label="Encerrada" color="error" size="small" />
-                      ) : isSessaoAtiva(sessao) ? (
-                        <Chip label="Em andamento" color="success" size="small" />
-                      ) : (
-                        <Chip label="Fechada" color="warning" size="small" />
-                      )}
-                    </TableCell>
-                    <TableCell align="right">
-                      {isSessaoAtiva(sessao) && (
+                  <Grid item xs={12} key={sessao.id}>
+                    <Card variant="outlined">
+                      <CardContent>
+                        <Typography variant="h6" component="div" gutterBottom>
+                          {sessao.tituloPauta}
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary" gutterBottom>
+                          ID: {sessao.id}
+                        </Typography>
+                        <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                          {sessao.encerrada ? (
+                            <Chip label="Encerrada" color="error" size="small" />
+                          ) : isSessaoAtiva(sessao) ? (
+                            <Chip label="Em andamento" color="success" size="small" />
+                          ) : (
+                            <Chip label="Fechada" color="warning" size="small" />
+                          )}
+                        </Box>
+                        <Typography variant="body2" color="text.secondary">
+                          Abertura: {format(new Date(sessao.dataAbertura), 'dd/MM/yyyy HH:mm', { locale: ptBR })}
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary">
+                          Fechamento: {format(new Date(sessao.dataFechamento), 'dd/MM/yyyy HH:mm', { locale: ptBR })}
+                        </Typography>
+                      </CardContent>
+                      <Divider />
+                      <CardActions sx={{ justifyContent: 'center', flexWrap: 'initial', gap: 1, p: 2 }}>
+                        {isSessaoAtiva(sessao) && (
+                          <Button 
+                            component={RouterLink} 
+                            to={`/sessoes/${sessao.id}/votar`} 
+                            variant="contained" 
+                            size="small" 
+                            color="primary"
+                            fullWidth
+                            sx={{ height: '36px' }}
+                          >
+                            Votar
+                          </Button>
+                        )}
                         <Button 
                           component={RouterLink} 
-                          to={`/sessoes/${sessao.id}/votar`} 
-                          variant="contained" 
-                          size="small" 
-                          color="primary"
-                          sx={{ mr: 1 }}
+                          to={`/sessoes/${sessao.id}/resultado`} 
+                          variant="outlined" 
+                          size="small"
+                          fullWidth
+                          sx={{ height: '36px' }}
                         >
-                          Votar
+                          Resultado
                         </Button>
-                      )}
-                      <Button 
-                        component={RouterLink} 
-                        to={`/sessoes/${sessao.id}/resultado`} 
-                        variant="outlined" 
-                        size="small"
-                      >
-                        Resultado
-                      </Button>
-                    </TableCell>
-                  </TableRow>
+                      </CardActions>
+                    </Card>
+                  </Grid>
                 ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
+              </Grid>
+            </Box>
+          ) : (
+            <TableContainer component={Paper}>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>ID</TableCell>
+                    <TableCell>Pauta</TableCell>
+                    <TableCell>Abertura</TableCell>
+                    <TableCell>Fechamento</TableCell>
+                    <TableCell>Status</TableCell>
+                    <TableCell align="right">Ações</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {filteredSessoes.map((sessao) => (
+                    <TableRow key={sessao.id}>
+                      <TableCell>{sessao.id}</TableCell>
+                      <TableCell>{sessao.tituloPauta}</TableCell>
+                      <TableCell>
+                        {format(new Date(sessao.dataAbertura), 'dd/MM/yyyy HH:mm', { locale: ptBR })}
+                      </TableCell>
+                      <TableCell>
+                        {format(new Date(sessao.dataFechamento), 'dd/MM/yyyy HH:mm', { locale: ptBR })}
+                      </TableCell>
+                      <TableCell>
+                        {sessao.encerrada ? (
+                          <Chip label="Encerrada" color="error" size="small" />
+                        ) : isSessaoAtiva(sessao) ? (
+                          <Chip label="Em andamento" color="success" size="small" />
+                        ) : (
+                          <Chip label="Fechada" color="warning" size="small" />
+                        )}
+                      </TableCell>
+                      <TableCell align="right">
+                        {isSessaoAtiva(sessao) && (
+                          <Button 
+                            component={RouterLink} 
+                            to={`/sessoes/${sessao.id}/votar`} 
+                            variant="contained" 
+                            size="small" 
+                            color="primary"
+                            sx={{ mr: 1 }}
+                          >
+                            Votar
+                          </Button>
+                        )}
+                        <Button 
+                          component={RouterLink} 
+                          to={`/sessoes/${sessao.id}/resultado`} 
+                          variant="outlined" 
+                          size="small"
+                        >
+                          Resultado
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          )}
 
           <Stack 
             direction={{ xs: 'column', sm: 'row' }} 
@@ -306,13 +375,14 @@ const SessaoList: React.FC<SessaoListProps> = ({ pautaId }) => {
             justifyContent="space-between"
             sx={{ mt: 3 }}
           >
-            <FormControl variant="outlined" sx={{ minWidth: 120 }}>
+            <FormControl variant="outlined" sx={{ minWidth: 120, width: isMobile ? '100%' : 'auto', mb: isMobile ? 2 : 0 }}>
               <InputLabel id="items-per-page-label">Itens por página</InputLabel>
               <Select
                 labelId="items-per-page-label"
                 value={pageSize}
                 onChange={handleChangePageSize}
                 label="Itens por página"
+                fullWidth={isMobile}
               >
                 <MenuItem value={5}>5</MenuItem>
                 <MenuItem value={10}>10</MenuItem>
@@ -320,14 +390,17 @@ const SessaoList: React.FC<SessaoListProps> = ({ pautaId }) => {
               </Select>
             </FormControl>
 
-            <Pagination 
-              count={totalPages} 
-              page={page + 1} 
-              onChange={handleChangePage} 
-              variant="outlined" 
-              shape="rounded" 
-              color="primary"
-            />
+            <Box sx={{ width: isMobile ? '100%' : 'auto', display: 'flex', justifyContent: 'center' }}>
+              <Pagination 
+                count={totalPages} 
+                page={page + 1} 
+                onChange={handleChangePage} 
+                variant="outlined" 
+                shape="rounded" 
+                color="primary"
+                size={isMobile ? "small" : "medium"}
+              />
+            </Box>
           </Stack>
         </>
       )}

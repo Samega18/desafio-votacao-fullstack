@@ -98,6 +98,28 @@ public class AssociadoService {
     }
     
     /**
+     * Search associates by name or CPF
+     * 
+     * @param nome Name to search for (can be partial)
+     * @param cpf CPF to search for (can be partial)
+     * @param pageable Pagination information
+     * @return Page of associate DTOs matching the criteria
+     */
+    @Transactional(readOnly = true)
+    public Page<AssociadoDTO> buscarAssociados(String nome, String cpf, Pageable pageable) {
+        log.info("Buscando associados por nome: {} ou CPF: {}", nome, cpf);
+        
+        // If both parameters are null, return all associates
+        if ((nome == null || nome.trim().isEmpty()) && (cpf == null || cpf.trim().isEmpty())) {
+            return listarAssociados(pageable);
+        }
+        
+        // Search by name or CPF
+        return associadoRepository.findByNomeContainingIgnoreCaseOrCpfContaining(
+                nome, cpf, pageable).map(mapper::toDto);
+    }
+    
+    /**
      * Find an associate by CPF
      * 
      * @param cpf CPF of the associate
