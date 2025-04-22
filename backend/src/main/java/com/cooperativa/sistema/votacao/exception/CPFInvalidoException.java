@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 /**
  * Exception thrown when a CPF is invalid
  */
-@ResponseStatus(HttpStatus.BAD_REQUEST)
+@ResponseStatus(HttpStatus.NOT_FOUND)
 public class CPFInvalidoException extends RuntimeException {
     
     public CPFInvalidoException(String message) {

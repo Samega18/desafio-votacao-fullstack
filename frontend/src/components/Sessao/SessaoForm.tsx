@@ -32,7 +32,20 @@ const SessaoForm: React.FC<SessaoFormProps> = ({ pautaId, onSuccess }) => {
       alert('Sessão de votação aberta com sucesso!');
     } catch (error) {
       console.error('Erro ao abrir sessão de votação:', error);
-      alert('Erro ao abrir sessão de votação. Tente novamente.');
+      let errorMessage = 'Erro ao abrir sessão de votação. Tente novamente.';
+
+      if (error instanceof Response) {
+        try {
+          const errorData = await error.json();
+          errorMessage = errorData.response.data.message || errorMessage;
+        } catch (e) {
+          console.error('Erro ao parsear resposta de erro:', e);
+        }
+      } else if (error instanceof Error) {
+        errorMessage = error.response.data.message;
+      }
+
+      alert(errorMessage);
     } finally {
       setSubmitting(false);
     }

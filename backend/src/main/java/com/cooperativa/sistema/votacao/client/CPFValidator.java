@@ -48,10 +48,10 @@ public class CPFValidator {
         // Simulate a fake CPF validation service
         try {
             // 20% chance of the CPF being invalid
-//            if (random.nextInt(5) == 0) {
-//                log.info("CPF inválido: {}", cpf);
-//                throw new CPFInvalidoException("CPF inválido");
-//            }
+            if (random.nextInt(5) == 0) {
+                log.info("CPF inválido: {}", cpf);
+                throw new CPFInvalidoException("CPF inválido");
+            }
             
             // 20% chance of the associate not being able to vote
             if (random.nextInt(5) == 0) {
@@ -60,8 +60,8 @@ public class CPFValidator {
             }
             
             // In a real scenario, we would make an HTTP request to the CPF validator service
-            // ResponseEntity<CPFValidationResponse> response = 
-            //     restTemplate.getForEntity(validatorUrl + "?cpf=" + cpf, CPFValidationResponse.class);
+            ResponseEntity<CPFValidationResponse> response = 
+                restTemplate.getForEntity(validatorUrl + "?cpf=" + cpf, CPFValidationResponse.class);
             
             // For this fake implementation, we return ABLE_TO_VOTE
             log.info("CPF válido e associado pode votar: {}", cpf);

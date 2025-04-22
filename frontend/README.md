@@ -55,7 +55,7 @@ Para iniciar o servidor de desenvolvimento:
 npm run dev
 ```
 
-O aplicativo estará disponível em [http://localhost:3000](http://localhost:3000) por padrão (a porta pode variar se 5173 estiver em uso).
+O aplicativo estará disponível em [http://localhost:3000](http://localhost:3000) por padrão (a porta pode variar se 3000 estiver em uso).
 
 ### Compilação para Produção
 

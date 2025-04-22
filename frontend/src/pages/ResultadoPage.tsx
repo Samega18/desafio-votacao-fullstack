@@ -64,16 +64,31 @@ const ResultadoPage: React.FC = () => {
 
   return (
     <Box>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+      <Box sx={{ 
+        display: 'flex', 
+        flexDirection: { xs: 'column', sm: 'row' },
+        justifyContent: 'space-between', 
+        alignItems: { xs: 'flex-start', sm: 'center' }, 
+        mb: 3,
+        gap: 2
+      }}>
         <Typography variant="h4" component="h1">
           Resultado da Votação
         </Typography>
-        <Box>
+        <Box sx={{ 
+          display: 'flex', 
+          flexDirection: { xs: 'column', sm: 'row' },
+          gap: 1,
+          width: { xs: '100%', sm: '50%' }
+        }}>
           <Button
             component={RouterLink}
             to={`/sessoes/${resultado.sessaoId}/votar`}
             variant="outlined"
-            sx={{ mr: 2 }}
+            fullWidth
+            sx={{ 
+              minWidth: { xs: '100%', sm: 'auto' }
+            }}
           >
             Voltar para Votação
           </Button>
@@ -81,6 +96,10 @@ const ResultadoPage: React.FC = () => {
             component={RouterLink}
             to="/sessoes"
             variant="outlined"
+            fullWidth
+            sx={{ 
+              minWidth: { xs: '100%', sm: 'auto' }
+            }}
           >
             Voltar para Sessões
           </Button>

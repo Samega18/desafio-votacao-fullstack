@@ -46,7 +46,7 @@ const SessoesPage: React.FC = () => {
           display: 'flex', 
           flexDirection: { xs: 'column', sm: 'row' },
           gap: 1,
-          width: { xs: '100%', sm: 'auto' }
+          width: { xs: '100%', sm: '50%' }
         }}>
           <Button
             component={RouterLink}

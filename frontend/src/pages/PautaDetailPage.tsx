@@ -27,24 +27,23 @@ const PautaDetailPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [tabIndex, setTabIndex] = useState(0);
 
-  useEffect(() => {
-    const fetchPauta = async () => {
-      if (!id) return;
-      
-      try {
-        setLoading(true);
-        const pautaId = parseInt(id, 10);
-        const data = await PautaService.obterPauta(pautaId);
-        setPauta(data);
-        setError(null);
-      } catch (error) {
-        console.error('Erro ao carregar detalhes da pauta:', error);
-        setError('Não foi possível carregar os detalhes da pauta. Tente novamente.');
-      } finally {
-        setLoading(false);
-      }
-    };
+  const fetchPauta = async () => {
+    if (!id) return;
+    try {
+      setLoading(true);
+      const pautaId = parseInt(id, 10);
+      const data = await PautaService.obterPauta(pautaId);
+      setPauta(data);
+      setError(null);
+    } catch (error) {
+      console.error('Erro ao carregar detalhes da pauta:', error);
+      setError('Não foi possível carregar os detalhes da pauta. Tente novamente.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchPauta();
   }, [id]);
 
